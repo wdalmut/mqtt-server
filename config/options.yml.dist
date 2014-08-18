@@ -1,0 +1,25 @@
+aws:
+    access_key_id: ""
+    secret_access_key: ""
+
+    keypair_name: "tmp-corley-cms"
+    private_key_path: "~/Amazon/walterdalmut/tmp-corley-cms.pem"
+
+    instance_type: "m1.small"
+    region: "eu-west-1"
+    ami: "ami-036eaa74"
+    ssh_username: "ubuntu"
+    security_groups:
+        - salt-minion
+        - test-mqtt
+
+openstack:
+    username: ""
+    api_key: ""
+    floating_ip: ""
+    keypair_name: "wdm"
+
+digitalocean:
+    api_key: ""
+    image: "Ubuntu 12.10 x64"
+    region: "New York 2"

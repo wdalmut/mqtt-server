@@ -5,8 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 require "yaml"
 
-vconfig = YAML::load_file("./config/aws.yml")
-oconfig = YAML::load_file("./config/openstack.yml")
+vconfig = YAML::load_file("./config/options.yml")
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -25,21 +24,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         vb.customize ["modifyvm", :id, "--memory", "256", "--name", config.vm.hostname]
     end
 
+    dev.vm.provision :shell, :inline => "hostname gps.mqtt.corley.it"
+
     dev.vm.provision :salt do |salt|
         salt.minion_config = "./minion"
         salt.verbose = true
         salt.run_highstate = true
         salt.install_type = "daily"
     end
-  end
 
-  config.vm.define :cloud do |cloud|
-    cloud.vm.box = "ubuntu_aws"
-    cloud.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+    dev.vm.provider :aws do |aws, override|
+        override.vm.box = "ubuntu_aws"
+        override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
 
-    cloud.vm.synced_folder ".", "/srv/"
-
-    cloud.vm.provider :aws do |aws, override|
         aws.access_key_id = vconfig["aws"]["access_key_id"]
         aws.secret_access_key = vconfig["aws"]["secret_access_key"]
         aws.keypair_name = vconfig["aws"]["keypair_name"]
@@ -54,40 +51,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         override.ssh.username = vconfig["aws"]["ssh_username"]
     end
 
-    cloud.vm.provision :shell, :inline => "hostname gps.mqtt.corley.it"
+    dev.vm.provider :openstack do |os, override|
+      override.vm.box = "openstack_box"
+      override.vm.box_url = "https://github.com/cloudbau/vagrant-openstack-plugin/raw/master/dummy.box"
 
-    cloud.vm.provision :salt do |salt|
-        salt.minion_config = "./minion"
-        salt.verbose = true
-        salt.run_highstate = true
-        salt.install_type = "daily"
-    end
-  end
-
-  config.vm.define :test do |test|
-    require 'vagrant-openstack-plugin'
-
-    test.vm.box = "openstack_box"
-    test.vm.box_url = "https://github.com/cloudbau/vagrant-openstack-plugin/raw/master/dummy.box"
-
-    test.vm.synced_folder ".", "/srv/"
-
-    test.ssh.private_key_path = "~/Enter/walterdalmut/wdm.pem"
-
-    test.vm.provision :salt do |salt|
-      salt.minion_config = "./minion"
-      salt.verbose = true
-      salt.run_highstate = true
-      salt.install_type = "daily"
-    end
-
-    config.vm.provider :openstack do |os|
       os.server_name  = "gps.mqtt.corley.it"
-      os.username     = oconfig["openstack"]["username"]
-      os.api_key      = oconfig["openstack"]["api_key"]
-      os.tenant       = oconfig["openstack"]["username"]
-      os.keypair_name = oconfig["openstack"]["keypair_name"]
-      os.floating_ip  = oconfig["openstack"]["floating_ip"]
+      os.username     = vconfig["openstack"]["username"]
+      os.api_key      = vconfig["openstack"]["api_key"]
+      os.tenant       = vconfig["openstack"]["username"]
+      os.keypair_name = vconfig["openstack"]["keypair_name"]
+      os.floating_ip  = vconfig["openstack"]["floating_ip"]
 
       os.flavor       = /e1standard.x1/
       os.image        = /GNU\/Linux Ubuntu Server 14.04 LTS Trusty Tahr x64/
@@ -96,6 +69,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
       os.networks           = [ "MyNet" ]
       os.security_groups    = ['default', 'test-sg']
+    end
+
+    dev.vm.provider :digitalocean do |digitalocean, override|
+        override.vm.box = "digital_ocean"
+        override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+
+        provider.api_key = vconfig["digitalocean"]["api_key"]
+        provider.image = vconfig["digitalocean"]["image"]
+        provider.region = vconfig["digitalocean"]["region"]
     end
   end
 end

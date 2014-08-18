@@ -1,0 +1,18 @@
+# Mqtt
+
+Just a simple mqtt server using vagrant and salt
+
+## Start the service
+
+Actually the system uses 2 networks (internal and bridged)
+
+```
+vagrant up dev
+```
+
+## Test/Production
+
+```
+vagrant up test
+```
+

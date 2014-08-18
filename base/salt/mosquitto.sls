@@ -12,16 +12,16 @@ mosquitto:
             - pkg: mosquitto
             - file: /etc/mosquitto/mosquitto.conf
 
-/etc/mosquitto/mosquitto.conf:
+/etc/mosquitto/mosquitto.pwd:
     file.managed:
-        - source: salt://mosquitto.conf
+        - source: salt://mosquitto.pwd
         - user: root
         - group: root
         - mode: 0644
 
-/etc/mosquitto/mosquitto.pwd:
+/etc/mosquitto/mosquitto.conf:
     file.managed:
-        - source: salt://mosquitto.pwd
+        - source: salt://mosquitto.conf
         - user: root
         - group: root
         - mode: 0644

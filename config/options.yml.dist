@@ -18,6 +18,7 @@ openstack:
     api_key: ""
     floating_ip: ""
     keypair_name: "wdm"
+    private_key_path: "~/Enter/walterdalmut/wdm.pem"
 
 digitalocean:
     api_key: ""

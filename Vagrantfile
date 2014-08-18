@@ -9,22 +9,13 @@ vconfig = YAML::load_file("./config/options.yml")
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
+  config.ssh.private_key_path = "~/.ssh/id_rsa"
   config.vm.define :dev do |dev|
     dev.vm.box = "precise64"
     dev.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
-    #dev.vm.network "forwarded_port", guest: 1883, host: 1883, auto_correct: false
-    config.vm.network :public_network, :bridge => 'wlan0', ip: "192.168.1.201"
-
-    dev.vm.hostname = "mosquitto-dev.local"
 
     dev.vm.synced_folder ".", "/srv/"
-
-    dev.vm.provider "virtualbox" do |vb|
-        vb.customize ["modifyvm", :id, "--memory", "256", "--name", config.vm.hostname]
-    end
-
-    dev.vm.provision :shell, :inline => "hostname gps.mqtt.corley.it"
 
     dev.vm.provision :salt do |salt|
         salt.minion_config = "./minion"
@@ -33,9 +24,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         salt.install_type = "daily"
     end
 
+    dev.vm.provider "virtualbox" do |vb, override|
+      vb.customize ["modifyvm", :id, "--memory", "256", "--name", config.vm.hostname]
+
+      #override.vm.network "forwarded_port", guest: 1883, host: 1883, auto_correct: false
+      override.vm.network :public_network, :bridge => 'wlan0', ip: "192.168.1.201"
+      override.vm.hostname = "mosquitto-dev.local"
+    end
+
     dev.vm.provider :aws do |aws, override|
         override.vm.box = "ubuntu_aws"
         override.vm.box_url = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
+
+        override.vm.hostname = "gps.mqtt.corley.it"
 
         aws.access_key_id = vconfig["aws"]["access_key_id"]
         aws.secret_access_key = vconfig["aws"]["secret_access_key"]
@@ -56,6 +57,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       override.vm.box_url = "https://github.com/cloudbau/vagrant-openstack-plugin/raw/master/dummy.box"
 
       os.server_name  = "gps.mqtt.corley.it"
+
+      override.ssh.private_key_path = vconfig["openstack"]["private_key_path"]
+
       os.username     = vconfig["openstack"]["username"]
       os.api_key      = vconfig["openstack"]["api_key"]
       os.tenant       = vconfig["openstack"]["username"]
@@ -72,12 +76,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     dev.vm.provider :digitalocean do |digitalocean, override|
-        override.vm.box = "digital_ocean"
-        override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+      override.vm.box = "digital_ocean"
+      override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
 
-        digitalocean.api_key = vconfig["digitalocean"]["api_key"]
-        digitalocean.image = vconfig["digitalocean"]["image"]
-        digitalocean.region = vconfig["digitalocean"]["region"]
+      override.vm.hostname = "gps.mqtt.corley.it"
+
+      digitalocean.api_key = vconfig["digitalocean"]["api_key"]
+      digitalocean.image = vconfig["digitalocean"]["image"]
+      digitalocean.region = vconfig["digitalocean"]["region"]
     end
   end
 end

@@ -7,12 +7,12 @@ Just a simple mqtt server using vagrant and salt
 Actually the system uses 2 networks (internal and bridged)
 
 ```
-vagrant up dev
+vagrant up
 ```
 
 ## Test/Production
 
 ```
-vagrant up test
+vagrant up --provider=openstack|aws|digitalocean
 ```
 

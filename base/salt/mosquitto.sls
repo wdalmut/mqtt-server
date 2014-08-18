@@ -19,3 +19,10 @@ mosquitto:
         - group: root
         - mode: 0644
 
+/etc/mosquitto/mosquitto.pwd:
+    file.managed:
+        - source: salt://mosquitto.pwd
+        - user: root
+        - group: root
+        - mode: 0644
+

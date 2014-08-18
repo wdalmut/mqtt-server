@@ -12,7 +12,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     dev.vm.box = "precise64"
     dev.vm.box_url = "http://files.vagrantup.com/precise64.box"
 
-    dev.vm.network "forwarded_port", guest: 1883, host: 1883, auto_correct: false
+    #dev.vm.network "forwarded_port", guest: 1883, host: 1883, auto_correct: false
+    config.vm.network :public_network, :bridge => 'wlan0', ip: "192.168.1.201"
 
     dev.vm.hostname = "mosquitto-dev.local"
 
@@ -44,14 +45,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         aws.instance_type = vconfig["aws"]["instance_type"]
         aws.ami = vconfig["aws"]["ami"]
         aws.tags = {
-            'Name' => ' altran.mqtt.corley.it'
+            'Name' => ' gps.mqtt.corley.it'
         }
         aws.security_groups = vconfig["aws"]["security_groups"]
         override.ssh.private_key_path = vconfig["aws"]["private_key_path"]
         override.ssh.username = vconfig["aws"]["ssh_username"]
     end
 
-    cloud.vm.provision :shell, :inline => "hostname altran.mqtt.corley.it"
+    cloud.vm.provision :shell, :inline => "hostname gps.mqtt.corley.it"
 
     cloud.vm.provision :salt do |salt|
         salt.minion_config = "./minion"

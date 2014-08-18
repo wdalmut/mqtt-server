@@ -6,8 +6,10 @@ VAGRANTFILE_API_VERSION = "2"
 require "yaml"
 
 vconfig = YAML::load_file("./config/aws.yml")
+oconfig = YAML::load_file("./config/openstack.yml")
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
   config.vm.define :dev do |dev|
     dev.vm.box = "precise64"
     dev.vm.box_url = "http://files.vagrantup.com/precise64.box"
@@ -59,6 +61,41 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         salt.verbose = true
         salt.run_highstate = true
         salt.install_type = "daily"
+    end
+  end
+
+  config.vm.define :test do |test|
+    require 'vagrant-openstack-plugin'
+
+    test.vm.box = "openstack_box"
+    test.vm.box_url = "https://github.com/cloudbau/vagrant-openstack-plugin/raw/master/dummy.box"
+
+    test.vm.synced_folder ".", "/srv/"
+
+    test.ssh.private_key_path = "~/Enter/walterdalmut/wdm.pem"
+
+    test.vm.provision :salt do |salt|
+      salt.minion_config = "./minion"
+      salt.verbose = true
+      salt.run_highstate = true
+      salt.install_type = "daily"
+    end
+
+    config.vm.provider :openstack do |os|
+      os.server_name  = "gps.mqtt.corley.it"
+      os.username     = oconfig["openstack"]["username"]
+      os.api_key      = oconfig["openstack"]["api_key"]
+      os.tenant       = oconfig["openstack"]["username"]
+      os.keypair_name = oconfig["openstack"]["keypair_name"]
+      os.floating_ip  = oconfig["openstack"]["floating_ip"]
+
+      os.flavor       = /e1standard.x1/
+      os.image        = /GNU\/Linux Ubuntu Server 14.04 LTS Trusty Tahr x64/
+      os.endpoint     = "https://api.it-mil1.entercloudsuite.com/v2.0/tokens"
+      os.ssh_username = "ubuntu"
+
+      os.networks           = [ "MyNet" ]
+      os.security_groups    = ['default', 'test-sg']
     end
   end
 end

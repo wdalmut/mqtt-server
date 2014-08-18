@@ -1,2 +1,3 @@
 .vagrant
 config/aws.yml
+config/openstack.yml

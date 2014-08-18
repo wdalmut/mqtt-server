@@ -1,0 +1,6 @@
+openstack:
+    username: "email"
+    api_key: "password"
+    floating_ip: "your-ip"
+    keypair_name: "keypair"
+

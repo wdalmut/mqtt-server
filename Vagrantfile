@@ -75,9 +75,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         override.vm.box = "digital_ocean"
         override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
 
-        provider.api_key = vconfig["digitalocean"]["api_key"]
-        provider.image = vconfig["digitalocean"]["image"]
-        provider.region = vconfig["digitalocean"]["region"]
+        digitalocean.api_key = vconfig["digitalocean"]["api_key"]
+        digitalocean.image = vconfig["digitalocean"]["image"]
+        digitalocean.region = vconfig["digitalocean"]["region"]
     end
   end
 end

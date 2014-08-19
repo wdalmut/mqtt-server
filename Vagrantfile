@@ -72,7 +72,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       os.ssh_username = "ubuntu"
 
       os.networks           = [ "MyNet" ]
-      os.security_groups    = ['default', 'test-sg']
+      os.security_groups    = ['default', 'mqtt-sg']
     end
 
     dev.vm.provider :digitalocean do |digitalocean, override|

@@ -10,7 +10,6 @@ mosquitto:
             - pkg: mosquitto
         - watch:
             - pkg: mosquitto
-            - file: /etc/mosquitto/mosquitto.conf
 
 /etc/mosquitto/mosquitto.pwd:
     file.managed:
@@ -18,6 +17,8 @@ mosquitto:
         - user: root
         - group: root
         - mode: 0644
+        - watch_in:
+            - service: mosquitto
 
 /etc/mosquitto/mosquitto.conf:
     file.managed:
@@ -25,4 +26,6 @@ mosquitto:
         - user: root
         - group: root
         - mode: 0644
+        - watch_in:
+            - service: mosquitto
 

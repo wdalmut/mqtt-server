@@ -21,6 +21,7 @@ openstack:
     private_key_path: "~/Enter/walterdalmut/wdm.pem"
 
 digitalocean:
-    api_key: ""
-    image: "Ubuntu 12.10 x64"
-    region: "New York 2"
+    token: ""
+    image: "Ubuntu 14.04 x64"
+    region: "nyc2"
+    size: "512mb"

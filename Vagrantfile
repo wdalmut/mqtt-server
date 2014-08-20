@@ -75,15 +75,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       os.security_groups    = ['default', 'mqtt-sg']
     end
 
-    dev.vm.provider :digitalocean do |digitalocean, override|
+    dev.vm.provider :digital_ocean do |digitalocean, override|
       override.vm.box = "digital_ocean"
       override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
 
       override.vm.hostname = "gps.mqtt.corley.it"
 
-      digitalocean.api_key = vconfig["digitalocean"]["api_key"]
+      digitalocean.token = vconfig["digitalocean"]["token"]
       digitalocean.image = vconfig["digitalocean"]["image"]
       digitalocean.region = vconfig["digitalocean"]["region"]
+      digitalocean.size = vconfig['digitalocean']['size']
     end
   end
 end

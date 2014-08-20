@@ -79,6 +79,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       override.vm.box = "digital_ocean"
       override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
 
+      override.ssh.private_key_path = '~/.ssh/id_rsa'
+
       override.vm.hostname = "gps.mqtt.corley.it"
 
       digitalocean.token = vconfig["digitalocean"]["token"]

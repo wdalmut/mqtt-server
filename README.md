@@ -5,7 +5,7 @@ Just a simple mqtt server using vagrant and salt
 ## Generate your credentials
 
 ```
-mosquitto_pwd -c base/salt/mosquitto.pwd walter
+mosquitto_passwd -c base/salt/mosquitto.pwd walter
 ```
 
 ## Start the service
@@ -19,6 +19,6 @@ vagrant up
 ## Test/Production
 
 ```
-vagrant up --provider=openstack|aws|digitalocean
+vagrant up --provider=openstack|aws|digital_ocean
 ```
 

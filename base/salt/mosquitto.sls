@@ -11,15 +11,6 @@ mosquitto:
         - watch:
             - pkg: mosquitto
 
-/etc/mosquitto/mosquitto.pwd:
-    file.managed:
-        - source: salt://mosquitto.pwd
-        - user: root
-        - group: root
-        - mode: 0644
-        - watch_in:
-            - service: mosquitto
-
 /etc/mosquitto/mosquitto.conf:
     file.managed:
         - source: salt://mosquitto.conf
